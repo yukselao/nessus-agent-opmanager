@@ -26,7 +26,7 @@ export username="installeruser"
 export password="MySecretPassword^^"
 ```
 
-**Steps:**
+__Steps:__
 1-
 Setup and test configuration file
 ```
