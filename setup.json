@@ -10,7 +10,7 @@
     {
       "ip": "10.10.10.123",
       "user": "root",
-      "os": "rhel",
+      "os": "rhel8",
       "authMethod": "genericuser"
     },
     {
