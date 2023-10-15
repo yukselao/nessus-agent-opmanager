@@ -26,9 +26,7 @@ export username="installeruser"
 export password="MySecretPassword^^"
 ```
 
-__Steps:__
-1-
-Setup and test configuration file
+__Step 1:__ Setup and test configuration file
 ```
 opctl -showconfig
 opctl -testconfig
