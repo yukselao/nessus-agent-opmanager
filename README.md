@@ -1,3 +1,7 @@
+About the project:
+--
+This project was developed to facilitate nessus agent installations and to facilitate problem solving related to agent management. It is an open source project that you cannot officially get support from Tenable.
+
 Runtime Environment:
 --
 
