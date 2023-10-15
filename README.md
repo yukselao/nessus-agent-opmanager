@@ -20,15 +20,13 @@ Usage:
 --
 Before starting modify setup.json and config/.env files.
 
-
 ```
-[root@tenable-5cfxx56r nessus-agent-opmanager]# cat config/.env
 [root@tenable-5cfxx56r nessus-agent-opmanager]# cat config/.env
 export username="installeruser"
 export password="MySecretPassword^^"
 ```
 
-Steps:
+**Steps:**
 1-
 Setup and test configuration file
 ```
