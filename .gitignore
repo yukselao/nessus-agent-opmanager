@@ -1,0 +1,11 @@
+.env
+.env.example
+.env.local
+.env.staging
+# RPM SOURCES
+*.tgz
+*.gz
+*.zip
+*.war
+*.rpm
+*.deb

@@ -1,0 +1,47 @@
+#!/bin/bash
+source config/.env
+source lib/function.sh
+
+
+
+for param in $@; do
+	if [[ "$param" != "${param//-help/}" ]]; then
+		help
+		exit 0
+	fi
+	if [[ "$param" != "${param//-testconnection/}" ]]; then
+		export connectiontest="true"
+	fi
+	if [[ "$param" != "${param//-showconfig/}" ]]; then
+		cat setup.json |jq
+	fi
+done
+cat setup.json | jq '.targetList[] | (.ip + "|" + .user + "|" + .os + "|" + .authMethod)' | while read line; do
+	ip=$(echo $line | tr -d '"' |cut -d'|' -f1)
+	user=$(echo $line | tr -d '"' |cut -d'|' -f2)
+	os=$(echo $line | tr -d '"' |cut -d'|' -f3)
+	authmethod=$(echo $line | tr -d '"' |cut -d'|' -f4)
+
+	if [[ "$connectiontest" == "true" ]]; then
+		ping -c1 -w2 $ip &>/dev/null
+		if [ $? -eq 0 ]; then
+			logger "INFO" "$ip is up"
+		else
+			logger "ERROR" "$ip is down"
+		fi
+		if [[ "$authmethod" == "genericuser" ]]; then
+			sshcheck="$(genericssh "$ip" "$username" "$password" "connectioncheck")"
+			if [[ "$sshcheck" == "success" ]]; then
+				uid=$(genericssh "$ip" "$username" "$password" "runcommand" "id -u")
+				accessdetails=$(genericssh "$ip" "$username" "$password" "runcommand" "id")
+				if [[ "$uid" == "0" ]]; then
+					logger "INFO" "$ip permission is ok"
+				else
+					logger "ERROR" "$ip permission failed, access details: $accessdetails"
+				fi
+			fi
+		fi
+	fi
+
+
+done

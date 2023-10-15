@@ -1,0 +1,3 @@
+
+opctl -showconfig
+opctl -testconfig

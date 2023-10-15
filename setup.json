@@ -1,0 +1,29 @@
+{
+  "genericCredentialFile": "config/.env",
+  "logsDir": "logs/",
+  "setupFile": {
+    "rhel7": "NessusAgent-10.4.2-es7.x86_64.rpm",
+    "rhel8": "NessusAgent-10.4.2-es8.x86_64.rpm",
+    "ubuntu": "NessusAgent-10.4.2-ubuntu1404_amd64.deb"
+  },
+  "targetList": [
+    {
+      "ip": "10.10.10.123",
+      "user": "root",
+      "os": "rhel",
+      "authMethod": "genericuser"
+    },
+    {
+      "ip": "10.10.10.122",
+      "user": "root",
+      "os": "ubuntu",
+      "authMethod": "genericuser"
+    },
+    {
+      "ip": "10.10.10.124",
+      "user": "root",
+      "os": "ubuntu",
+      "authMethod": "genericuser"
+    }
+  ]
+}
