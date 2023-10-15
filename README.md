@@ -18,7 +18,7 @@ Listed in requirements.txt
 
 Configuration File:
 --
-The setup.json file must be edited for configuration definitions.
+The setup.json file in the project folder must be edited for configuration definitions.
 
 ```json
 {
