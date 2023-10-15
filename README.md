@@ -5,8 +5,7 @@ CentOS Linux release 7.9.2009 (Core)
 
 Dependicies:
 --
-sshpass
-jq
+[root@tenable-5cfxx56r nessus-agent-opmanager]# yum install sshpass jq -y
 
 
 Usage:
