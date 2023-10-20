@@ -3,6 +3,7 @@ source config/.env
 source lib/function.sh
 
 
+export ppwd=$(pwd)
 
 for param in $@; do
 	if [[ "$param" != "${param//-help/}" ]]; then
@@ -11,6 +12,12 @@ for param in $@; do
 	fi
 	if [[ "$param" != "${param//-testconnection/}" ]]; then
 		export connectiontest="true"
+	fi
+	if [[ "$param" != "${param//-verbose/}" ]]; then
+		export verbose="true"
+	fi
+	if [[ "$param" != "${param//-copyonly/}" ]]; then
+		export copyonly="true"
 	fi
 	if [[ "$param" != "${param//-showconfig/}" ]]; then
 		cat setup.json |jq
@@ -21,13 +28,14 @@ cat setup.json | jq '.targetList[] | (.ip + "|" + .user + "|" + .os + "|" + .aut
 	user=$(echo $line | tr -d '"' |cut -d'|' -f2)
 	os=$(echo $line | tr -d '"' |cut -d'|' -f3)
 	authmethod=$(echo $line | tr -d '"' |cut -d'|' -f4)
-
 	if [[ "$connectiontest" == "true" ]]; then
 		ping -c1 -w2 $ip &>/dev/null
 		if [ $? -eq 0 ]; then
 			logger "INFO" "$ip is up"
+			plog "INFO" "$ip is up"
 		else
 			logger "ERROR" "$ip is down"
+			plog "INFO" "$ip is up"
 		fi
 		if [[ "$authmethod" == "genericuser" ]]; then
 			sshcheck="$(genericssh "$ip" "$username" "$password" "connectioncheck")"
@@ -36,9 +44,22 @@ cat setup.json | jq '.targetList[] | (.ip + "|" + .user + "|" + .os + "|" + .aut
 				accessdetails=$(genericssh "$ip" "$username" "$password" "runcommand" "id")
 				if [[ "$uid" == "0" ]]; then
 					logger "INFO" "$ip permission is ok"
+					plog "INFO" "$ip permission is ok"
 				else
 					logger "ERROR" "$ip permission failed, access details: $accessdetails"
+					plog "ERROR" "$ip permission failed, access details: $accessdetails"
 				fi
+				if [[ "$copyonly" == "true" ]]; then
+					setupfile=$(installerfile $os)
+					setupfilename=$(installerfile $os |xargs basename)
+					ret=$(genericscp "$ip" "$username" "$password" "$setupfile" "/tmp/")
+					if [[ "$ret" == "success" ]]; then
+						plog "INFO" "$setupfile copied to /tmp/$setupfilename"
+					else
+						plog "ERROR" "$setupfile cannot copy to /tmp/$setupfilename"
+					fi
+				fi
+				
 			fi
 		fi
 	fi

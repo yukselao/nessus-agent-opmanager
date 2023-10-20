@@ -5,6 +5,16 @@ export logdir=$(cat setup.json  |jq '.logsDir' | tr -d '"')
 mkdir -p $logdir &>/dev/null
 export logfile=$logdir/app.log
 
+
+function plog {
+        severity="$1"
+        message="$(echo $@ | awk '{$1=""; print $0}' | awk '{$1=$1};1')"
+        logmsg="$(date "+%F %T") [$severity]: $message"
+        if [[ "$verbose" == "true" ]]; then
+                echo "$logmsg"
+        fi
+}
+
 function logger {
 	severity="$1"
 	message="$(echo $@ | awk '{$1=""; print $0}' | awk '{$1=$1};1')"
@@ -13,6 +23,26 @@ function logger {
 	if [[ "$severity" == "ERROR" ]]; then
 		echo "$logmsg" >> ${logfile}.error
 	fi
+}
+
+function installerfile {
+	find $ppwd/agent-setup/$1 -type f |head -1
+}
+
+function genericscp {
+        ip=$1
+        username=$2
+        password=$3
+	source=$4
+	target=$5
+	sshpass -p "$password" scp "$source" "${username}@${ip}:$target"
+        if [ $? -eq 0 ]; then
+		echo "success"
+        	logger "INFO" $ip scp success cmd:scp "$source" "${username}@${ip}:$target"
+        else
+		echo "failed"
+        	logger "ERROR" $ip scp failed cmd:scp "$source" "${username}@${ip}:$target"
+        fi
 }
 function genericssh {
         ip=$1
