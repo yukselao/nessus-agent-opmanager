@@ -2,6 +2,9 @@
 
 
 export logdir=$(cat setup.json  |jq '.logsDir' | tr -d '"')
+export NESSUSAGENT_KEY=$(cat setup.json  |jq '.nessusagent|.key' | tr -d '"')
+export NESSUSAGENT_HOST=$(cat setup.json  |jq '.nessusagent|.host' | tr -d '"')
+export NESSUSAGENT_PORT=$(cat setup.json  |jq '.nessusagent|.port' | tr -d '"')
 mkdir -p $logdir &>/dev/null
 export logfile=$logdir/app.log
 
@@ -26,8 +29,13 @@ function logger {
 }
 
 function installerfile {
-	find $ppwd/agent-setup/$1 -type f |head -1
+	find $ppwd/agent-setup/$1 -mindepth 1 -maxdepth 1 -type f ! -name "*.sh"|head -1
 }
+
+function installerscript {
+	find $ppwd/agent-setup/$1 -type f -name nessus-agent-install.sh |head -1
+}
+
 
 function genericscp {
         ip=$1
@@ -66,7 +74,10 @@ function genericssh {
 }
 
 function help {
+	echo -e "Usage:\n--"
 	echo 'opctl -showconfig: show config file
-opctl -testconnection: test connectivity for target systems'
+opctl -testconnection: test connectivity for target systems
+opctl -testconnection -copyonly
+'
 
 }

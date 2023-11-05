@@ -6,20 +6,31 @@
     "rhel8": "NessusAgent-10.4.2-es8.x86_64.rpm",
     "ubuntu": "NessusAgent-10.4.2-ubuntu1404_amd64.deb"
   },
+  "nessusagent": {
+    "key": "6a90b3d51c0ea011f07a2036c8b764d179d473ab17213c79b340b336f8dce9c9",
+    "host": "10.10.10.124",
+    "port": "8834"
+  },
   "targetList": [
     {
+      "name": "mycentos8",
+      "group": "linux",
       "ip": "10.10.10.123",
       "user": "root",
       "os": "rhel8",
       "authMethod": "genericuser"
     },
     {
+      "name": "myubuntu",
+      "group": "linux",
       "ip": "10.10.10.122",
       "user": "root",
       "os": "ubuntu",
       "authMethod": "genericuser"
     },
     {
+      "name": "agentmanager",
+      "group": "tenable",
       "ip": "10.10.10.124",
       "user": "root",
       "os": "ubuntu",

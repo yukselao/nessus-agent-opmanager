@@ -1,10 +1,15 @@
 #!/bin/bash
 source config/.env
 source lib/function.sh
+source lib/function.sh
+source lib/command/testconnection.sh
 
 
 export ppwd=$(pwd)
-
+if [[ -z "$1" ]]; then
+    help
+    exit 0
+fi
 for param in $@; do
 	if [[ "$param" != "${param//-help/}" ]]; then
 		help
@@ -19,50 +24,18 @@ for param in $@; do
 	if [[ "$param" != "${param//-copyonly/}" ]]; then
 		export copyonly="true"
 	fi
+        if [[ "$param" != "${param//-checksetupfiles/}" ]]; then
+                export checksetupfiles="true"
+        fi
+        if [[ "$param" != "${param//-installpackage/}" ]]; then
+                export installpackage="true"
+        fi
 	if [[ "$param" != "${param//-showconfig/}" ]]; then
 		cat setup.json |jq
 	fi
 done
-cat setup.json | jq '.targetList[] | (.ip + "|" + .user + "|" + .os + "|" + .authMethod)' | while read line; do
-	ip=$(echo $line | tr -d '"' |cut -d'|' -f1)
-	user=$(echo $line | tr -d '"' |cut -d'|' -f2)
-	os=$(echo $line | tr -d '"' |cut -d'|' -f3)
-	authmethod=$(echo $line | tr -d '"' |cut -d'|' -f4)
-	if [[ "$connectiontest" == "true" ]]; then
-		ping -c1 -w2 $ip &>/dev/null
-		if [ $? -eq 0 ]; then
-			logger "INFO" "$ip is up"
-			plog "INFO" "$ip is up"
-		else
-			logger "ERROR" "$ip is down"
-			plog "INFO" "$ip is up"
-		fi
-		if [[ "$authmethod" == "genericuser" ]]; then
-			sshcheck="$(genericssh "$ip" "$username" "$password" "connectioncheck")"
-			if [[ "$sshcheck" == "success" ]]; then
-				uid=$(genericssh "$ip" "$username" "$password" "runcommand" "id -u")
-				accessdetails=$(genericssh "$ip" "$username" "$password" "runcommand" "id")
-				if [[ "$uid" == "0" ]]; then
-					logger "INFO" "$ip permission is ok"
-					plog "INFO" "$ip permission is ok"
-				else
-					logger "ERROR" "$ip permission failed, access details: $accessdetails"
-					plog "ERROR" "$ip permission failed, access details: $accessdetails"
-				fi
-				if [[ "$copyonly" == "true" ]]; then
-					setupfile=$(installerfile $os)
-					setupfilename=$(installerfile $os |xargs basename)
-					ret=$(genericscp "$ip" "$username" "$password" "$setupfile" "/tmp/")
-					if [[ "$ret" == "success" ]]; then
-						plog "INFO" "$setupfile copied to /tmp/$setupfilename"
-					else
-						plog "ERROR" "$setupfile cannot copy to /tmp/$setupfilename"
-					fi
-				fi
-				
-			fi
-		fi
-	fi
 
 
-done
+if [[ "$connectiontest" == "true" ]]; then
+	testconnection 
+fi

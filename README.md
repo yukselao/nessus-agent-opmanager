@@ -52,6 +52,9 @@ The setup.json file in the project folder must be edited for configuration defin
 }
 ```
 
+Error: [info] [agent] Failed to open global database
+Solution: Disable Selinux
+
 
 Usage:
 --
