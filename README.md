@@ -52,9 +52,6 @@ The setup.json file in the project folder must be edited for configuration defin
 }
 ```
 
-Error: [info] [agent] Failed to open global database
-Solution: Disable Selinux
-
 
 Usage:
 --
@@ -71,3 +68,12 @@ __Step 1:__ Setup and test configuration file
 opctl -showconfig
 opctl -testconfig
 ```
+
+
+
+Known Errors: 
+--
+__1: Agent is not working properly on RHEL systems:
+Error: [info] [agent] Failed to open global database
+Solution: Disable Selinux
+
